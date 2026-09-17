@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.126.0",
+    "better-sqlite3": "13.0.3",
     "drizzle-orm": "0.45.2"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "9.6.0",
     "drizzle-kit": "0.31.10",
     "@whiteface/shared": "*"
   }

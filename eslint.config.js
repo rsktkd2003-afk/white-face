@@ -7,9 +7,10 @@ const anthropicSdkRestriction = {
   message: '@anthropic-ai/sdk は backend/src/llm/anthropicProvider.ts 以外から読み込めません（M1実装指示書14.6節）。',
 };
 
-const nodeSqliteRestriction = {
-  name: 'node:sqlite',
-  message: 'node:sqlite は backend/src/db/client.ts と backend/src/testing/ 以外から読み込めません（M1実装指示書14.6節）。',
+// Step 2 approved deviation（docs/deviations/step2-db-driver.md参照）: node:sqlite → better-sqlite3
+const sqliteDriverRestriction = {
+  name: 'better-sqlite3',
+  message: 'better-sqlite3 は backend/src/db/client.ts と backend/src/testing/ 以外から読み込めません（M1実装指示書14.6節、Step2 approved deviation）。',
 };
 
 const personaRestriction = {
@@ -40,9 +41,9 @@ export default tseslint.config(
     },
   },
   {
-    // ルート直下の設定ファイルは、どのworkspaceのtsconfigにも属さないため
+    // 各workspaceのtsconfigのincludeに含まれない設定ファイル（*.config.ts等）は、
     // 型情報を使うlintの対象外とする（typescript-eslint推奨の方法）。
-    files: ['eslint.config.js', 'vitest.config.ts'],
+    files: ['**/*.config.{js,ts,mjs,cjs}'],
     extends: [tseslint.configs.disableTypeChecked],
   },
   {
@@ -58,7 +59,7 @@ export default tseslint.config(
       'no-restricted-imports': [
         'error',
         {
-          paths: [anthropicSdkRestriction, nodeSqliteRestriction],
+          paths: [anthropicSdkRestriction, sqliteDriverRestriction],
           patterns: [personaRestriction],
         },
       ],
@@ -70,7 +71,7 @@ export default tseslint.config(
       'no-restricted-imports': [
         'error',
         {
-          paths: [nodeSqliteRestriction],
+          paths: [sqliteDriverRestriction],
           patterns: [personaRestriction],
         },
       ],
@@ -94,7 +95,7 @@ export default tseslint.config(
       'no-restricted-imports': [
         'error',
         {
-          paths: [anthropicSdkRestriction, nodeSqliteRestriction],
+          paths: [anthropicSdkRestriction, sqliteDriverRestriction],
         },
       ],
     },
