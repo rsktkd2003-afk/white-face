@@ -1,0 +1,27 @@
+{
+  "name": "whiteface",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24.19.0" },
+  "workspaces": ["shared", "backend", "frontend"],
+  "scripts": {
+    "dev:backend": "npm run dev -w @whiteface/backend",
+    "dev:frontend": "npm run dev -w @whiteface/frontend",
+    "start": "npm run build -w @whiteface/frontend && npm run start -w @whiteface/backend",
+    "typecheck": "npm run typecheck --workspaces",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "build": "npm run build --workspaces --if-present",
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "db:generate": "npm run db:generate -w @whiteface/backend"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "eslint": "10.10.0",
+    "@eslint/js": "10.0.1",
+    "typescript-eslint": "8.70.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "vitest": "5.0.1",
+    "@types/node": "24.13.5"
+  }
+}

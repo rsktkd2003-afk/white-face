@@ -1,0 +1,19 @@
+{
+  "name": "@whiteface/backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/main.ts --mode=dev",
+    "start": "node src/main.ts --mode=start",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "db:generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.126.0",
+    "drizzle-orm": "0.45.2"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.31.10",
+    "@whiteface/shared": "*"
+  }
+}

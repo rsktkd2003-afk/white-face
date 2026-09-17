@@ -1,0 +1,9 @@
+node_modules/
+data/
+frontend/dist/
+*.db
+*.db-wal
+*.db-shm
+.env
+.env.*
+!.env.example
