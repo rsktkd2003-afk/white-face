@@ -2,7 +2,7 @@
 // maxTokensが0以下のいずれでも起動エラーになることを確認する。
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ConfigValidationError, validateConfig } from './appConfig.ts';
+import { ConfigValidationError, loadConfig, validateConfig } from './appConfig.ts';
 
 const CONFIG_DIR = '/tmp/whiteface-config-test';
 
@@ -83,5 +83,30 @@ describe('T-CFG-01 設定の検証', () => {
     const atZero = baseConfig();
     (atZero.budget as Record<string, unknown>).warningRatio = 0;
     expect(() => validateConfig(atZero, CONFIG_DIR)).toThrow(ConfigValidationError);
+  });
+});
+
+describe('loadConfig 実ファイル統合（Step 5、backend/config/whiteface.config.json）', () => {
+  const REAL_CONFIG_PATH = path.resolve(import.meta.dirname, '../../config/whiteface.config.json');
+
+  it('実ファイルを読み込み、型検証・パス解決が期待どおりになる', () => {
+    const config = loadConfig(REAL_CONFIG_PATH);
+
+    expect(config.server).toEqual({ host: '127.0.0.1', port: 8787, devFrontendPort: 5173 });
+    expect(config.llm.roles.conversationPlanning).toEqual({
+      provider: 'anthropic',
+      model: 'claude-sonnet-5',
+      maxTokens: 8192,
+      effort: 'low',
+    });
+    expect(config.budget).toEqual({ monthlyUsd: 30, devTaskUsd: 2, warningRatio: 0.8 });
+
+    // 相対パス（database.path、frontend.distPath）がconfigファイルのあるディレクトリ
+    // （backend/config/）基準で絶対パスへ解決されていることを確認する。
+    const configDir = path.dirname(REAL_CONFIG_PATH);
+    expect(config.database.path).toBe(path.resolve(configDir, '../data/whiteface.db'));
+    expect(config.frontend.distPath).toBe(path.resolve(configDir, '../frontend/dist'));
+    expect(path.isAbsolute(config.database.path)).toBe(true);
+    expect(path.isAbsolute(config.frontend.distPath)).toBe(true);
   });
 });
