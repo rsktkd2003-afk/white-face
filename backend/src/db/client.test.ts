@@ -72,7 +72,7 @@ function newMessage(conversationId: string, content: string) {
 }
 
 describe('T-DB-01 マイグレーション', () => {
-  it('空のDBに適用するとStep2で定義した2テーブルが作られ、2回目の適用で何も変わらない', () => {
+  it('空のDBに適用すると3つのテーブル(conversations/messages/llm_calls)が作られ、2回目の適用で何も変わらない', () => {
     const conn = temp.openVerificationConnection();
     try {
       const tables = conn
@@ -82,7 +82,7 @@ describe('T-DB-01 マイグレーション', () => {
         .all()
         .map((row) => (row as { name: string }).name)
         .sort();
-      expect(tables).toEqual(['conversations', 'messages']);
+      expect(tables).toEqual(['conversations', 'llm_calls', 'messages']);
     } finally {
       conn.close();
     }

@@ -6,11 +6,19 @@ import path from 'node:path';
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
+import type { BaseSQLiteDatabase } from 'drizzle-orm/sqlite-core';
 
 const MIGRATIONS_FOLDER = path.resolve(import.meta.dirname, '../../drizzle');
 
+/**
+ * db/repositories/* が受け取る型。db.transaction()内で渡されるtxも同じ基底型を
+ * 持つため、repositoryの各関数はdbとtxのどちらでもそのまま使える（実装指示書8.1節
+ * 「リポジトリ層が扱うのはdbとスキーマだけ」）。
+ */
+export type WhitefaceDb = BaseSQLiteDatabase<'sync', Database.RunResult>;
+
 export interface WhitefaceDatabaseHandle {
-  db: ReturnType<typeof drizzle>;
+  db: WhitefaceDb;
   close: () => void;
 }
 

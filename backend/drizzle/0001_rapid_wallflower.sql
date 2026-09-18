@@ -1,0 +1,30 @@
+CREATE TABLE `llm_calls` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text NOT NULL,
+	`purpose` text NOT NULL,
+	`provider` text NOT NULL,
+	`model` text NOT NULL,
+	`effort` text,
+	`conversation_id` text,
+	`attempt` integer NOT NULL,
+	`status` text NOT NULL,
+	`stop_reason` text,
+	`error_code` text,
+	`error_message` text,
+	`input_tokens` integer,
+	`output_tokens` integer,
+	`cache_creation_input_tokens` integer,
+	`cache_read_input_tokens` integer,
+	`estimated_cost_micro_usd` integer DEFAULT 0 NOT NULL,
+	`cost_complete` integer NOT NULL,
+	`pricing_version` text NOT NULL,
+	`latency_ms` integer NOT NULL,
+	`first_token_ms` integer,
+	`started_at` text NOT NULL,
+	`finished_at` text NOT NULL,
+	FOREIGN KEY (`conversation_id`) REFERENCES `conversations`(`id`) ON UPDATE no action ON DELETE no action,
+	CONSTRAINT "llm_calls_status_check" CHECK("llm_calls"."status" in ('success', 'error', 'aborted')),
+	CONSTRAINT "llm_calls_cost_complete_check" CHECK("llm_calls"."cost_complete" in (0, 1))
+);
+--> statement-breakpoint
+CREATE INDEX `llm_calls_started_at_idx` ON `llm_calls` (`started_at`);
